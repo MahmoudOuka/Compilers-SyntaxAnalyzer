@@ -1,0 +1,60 @@
+Goal ::= MainClass ( ClassDeclaration )* <EOF>
+
+MainClass ::= "class" Identifier "{" "public" "static" "void" "main" "(" "String" "[" "]" Identifier ")" "{" Statement "}" "}"
+
+ClassDeclaration ::= "class" Identifier ( "extends" Identifier )? "{" ( VarDeclaration )* ( ConstructorDeclaration )* ( MethodDeclaration )* "}"
+
+VarDeclaration ::= Type Identifier ";"
+
+ConstructorDeclaration::= Identifier "(" ( Type Identifier ( "," Type Identifier )*)? ")" "{" ( VarDeclaration )* ( Statement )* "}"
+
+MethodDeclaration ::= ("public" | "private" | "protected") Type Identifier "(" ( Type Identifier ( "," Type Identifier )*)? ")" "{" ( VarDeclaration )* ( Statement )* "return" Expression ";" "}"
+
+Type ::= "boolean" SquareBrackets
+| "int" SquareBrackets
+| "float" SquareBrackets
+| "String" SquareBrackets
+| "char" SquareBrackets
+
+SquareBrackets ::= "[" "]" | lamba
+
+Statement ::= "{" ( Statement )* "}"
+| "if" "(" Expression ")" Statement IfStar
+| "while" "(" Expression ")" Statement
+| "System.out.println" "(" Expression ")" ";"
+| Identifier IdStar
+
+											
+IfStar ::= "else" Statement | lamba
+IdStar ::= "=" Expression ";" | "[" Expression "]" "=" Expression ";"
+
+Expression ::= <INTEGER_LITERAL> ExprStar
+| <FLOAT_LITERAL> ExprStar
+| "true" ExprStar
+| "false" ExprStar
+| Identifier ExprStar
+| "this" ExprStar
+| "new" NewStar
+| "!" Expression ExprStar	
+| "(" Expression ")" ExprStar
+
+NewStar ::= ("int" | "float" | "String" | "char" | "boolean" ) "[" Expression "]" ExprStar
+| Identifier "(" (Expression ( "," Expression)*)? ")" ExprStar
+
+ExprStar ::= ( "&&" | "||" | "==" | "!=" | "<" Equal | ">" Equal | "+" | "-" | "*" | "/" ) Expression ExprStar
+| "[" Expression "]" ExprStar
+| "." Dot
+| lamba
+
+Equal ::= "=" | lamba
+
+Dot ::= "." "length" ExprStar 
+| Identifier "(" ( Expression ( "," Expression )* )? ")" ExprStar
+
+
+Identifier ::= <IDENTIFIER>
+
+
+
+
+a=5+3;b=10*2;print(a);print(b)	
