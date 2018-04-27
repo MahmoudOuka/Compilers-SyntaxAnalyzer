@@ -2,13 +2,18 @@ Goal ::= MainClass ( ClassDeclaration )* <EOF>
 
 MainClass ::= "class" Identifier "{" "public" "static" "void" "main" "(" "String" "[" "]" Identifier ")" "{" Statement "}" "}"
 
-ClassDeclaration ::= "class" Identifier ( "extends" Identifier )? "{" ( VarDeclaration )* ( ConstructorDeclaration )* ( MethodDeclaration )* "}"
+ClassDeclaration ::= "class" Identifier ( "extends" Identifier )? "{"  VarD ConstructorD  MethodD  "}"
 
+VarD ::= VarDeclaration VarD | lamba
 VarDeclaration ::= Type Identifier ";"
 
-ConstructorDeclaration::= Identifier "(" ( Type Identifier ( "," Type Identifier )*)? ")" "{" ( VarDeclaration )* ( Statement )* "}"
+ConstructorD ::= ConstructorDeclaration ConstructorD | lamba
+ConstructorDeclaration::= Identifier "(" ( Type Identifier CommaVar )? ")" "{"  VarD  Stat  "}"
 
-MethodDeclaration ::= ("public" | "private" | "protected") Type Identifier "(" ( Type Identifier ( "," Type Identifier )*)? ")" "{" ( VarDeclaration )* ( Statement )* "return" Expression ";" "}"
+CommaVar ::= "," Type Identifier CommaVar | lamba
+
+MethodD ::= MethodDeclaration MethodD | lamba
+MethodDeclaration ::= ("public" | "private" | "protected") Type Identifier "(" ( Type Identifier CommaVar)? ")" "{" VarD Stat "return" Expression ";" "}"
 
 Type ::= "boolean" SquareBrackets
 | "int" SquareBrackets
@@ -18,7 +23,9 @@ Type ::= "boolean" SquareBrackets
 
 SquareBrackets ::= "[" "]" | lamba
 
-Statement ::= "{" ( Statement )* "}"
+Stat ::= Statement Stat | lamba
+
+Statement ::= "{" Stat  "}"
 | "if" "(" Expression ")" Statement IfStar
 | "while" "(" Expression ")" Statement
 | "System.out.println" "(" Expression ")" ";"
@@ -49,8 +56,9 @@ ExprStar ::= ( "&&" | "||" | "==" | "!=" | "<" Equal | ">" Equal | "+" | "-" | "
 Equal ::= "=" | lamba
 
 Dot ::= "." "length" ExprStar 
-| Identifier "(" ( Expression ( "," Expression )* )? ")" ExprStar
+| Identifier "(" ( Expression CommaExpr )? ")" ExprStar
 
+CommaExpr ::= "," Expression CommaExpr | lamba
 
 Identifier ::= <IDENTIFIER>
 

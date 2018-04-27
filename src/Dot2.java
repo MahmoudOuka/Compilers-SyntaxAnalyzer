@@ -5,23 +5,23 @@ public class Dot2 implements Dot{
 	private Identifier id;
 	private Expression expr;
 	private ExprStar exprStar;
-	private ArrayList<Expression>dotExpr;
+	private CommaExpr ce;
 	
 	/// Identifier "(" ( Expression ( "," Expression )* )? ")" ExprStar
 
-	public Dot2(Identifier id, Expression expr, ExprStar exprStar, ArrayList<Expression> dotExpr) {
+	public Dot2(Identifier id, Expression expr, ExprStar exprStar, CommaExpr ce) {
 		super();
 		this.id = id;
 		this.expr = expr;
 		this.exprStar = exprStar;
-		this.dotExpr = dotExpr;
+		this.ce = ce;
 	}
 	public Dot2(Identifier id, ExprStar exprStar) {
 		super();
 		this.id = id;
 		this.expr = null;
 		this.exprStar = exprStar;
-		this.dotExpr = null;
+		this.ce = null;
 	}
 
 	@Override
@@ -29,12 +29,7 @@ public class Dot2 implements Dot{
 		if(expr==null) {
 			return id.getValue()+" ( )"+exprStar.getValue();
 		}
-		
-		String value="";
-		for(Expression u : dotExpr) {
-			value=value+" ,"+u.getValue();
-		}
-		return id.getValue()+" ( "+expr.getValue()+value+" ) "+exprStar.getValue();
+		return id.getValue()+" ( "+expr.getValue()+" "+ce.getValue()+" ) "+exprStar.getValue();
 	}
 
 

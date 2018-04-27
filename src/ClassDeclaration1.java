@@ -5,13 +5,13 @@ public class ClassDeclaration1 implements ClassDeclaration {
 	Identifier id ; 
 	Identifier id1 ;
 	
-	 ArrayList<VarDeclaration>  vd ;
-	ArrayList<ConstructorDeclaration> cd ;
-	ArrayList<MethodDeclaration> md;
+	VarD vd ;
+	ConstructorD cd ;
+	MethodD md;
 	
 	
-	public ClassDeclaration1(Identifier id, Identifier id1, ArrayList<VarDeclaration> vd,
-			ArrayList<ConstructorDeclaration> cd, ArrayList<MethodDeclaration> md) {
+	public ClassDeclaration1(Identifier id, Identifier id1,VarD vd,
+			ConstructorD cd, MethodD md) {
 		super();
 		this.id = id;
 		this.id1 = id1;
@@ -21,8 +21,8 @@ public class ClassDeclaration1 implements ClassDeclaration {
 	}
 
 	
-	public ClassDeclaration1(Identifier id, ArrayList<VarDeclaration> vd,
-			ArrayList<ConstructorDeclaration> cd, ArrayList<MethodDeclaration> md) {
+	public ClassDeclaration1(Identifier id, VarD vd,
+			ConstructorD cd, MethodD md) {
 		super();
 		this.id = id;
 		this.id1 = null;
@@ -35,31 +35,11 @@ public class ClassDeclaration1 implements ClassDeclaration {
 	@Override
 	public String getValue()
 	{   
-		String value1 = "";
-		for(int i=0;i<vd.size();i++)
-		{
-			value1+=vd.get(i).getValue()+" ";
-		}
-		
-		String value2 = "";
-		for(int i=0;i<cd.size();i++)
-		{
-			value2+=cd.get(i).getValue()+" ";
-		}
-		
-		String value3 = "";
-		for(int i=0;i<md.size();i++)
-		{
-			value3+=md.get(i).getValue()+" ";
-		}
-		
-		
 		String ans = "";
 		ans +="class "+id.getValue();
 		if(id1!= null)
 			ans+="extends "+id1.getValue();
-			
-		return ans+"{"+value1+value2+value3+"}" ;
+		return ans+"{ "+vd.getValue()+" "+cd.getValue()+" "+md.getValue()+" }" ;
 	}
 
 }
