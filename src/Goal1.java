@@ -11,6 +11,6 @@ public class Goal1 implements Goal{
 	
 	@Override
     public String getValue() {
-        return  mainClass.getValue() + " "+c.getValue();
+        return mainClass.getValue() + " "+c.getValue();
     }
 }

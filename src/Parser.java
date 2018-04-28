@@ -168,7 +168,6 @@ public class Parser {
 		return  new Stat2();
 	}
 	public static Statement statement() {
-		System.out.println("hello from statement");
 		Token top=queue.peek();
 		if(top.value.equals("{")) {
 			
@@ -405,11 +404,12 @@ public class Parser {
 		return new CommaExpr2() ;
 	}
 	public static ExprStar exprStar() {
+		////
 		Token top=queue.peek();
 		String t=top.value;
+		System.out.println("t = "+ t);
 		if(t.equals("==")||t.equals("&&")||t.equals("||")||t.equals("!=")||
 				t.equals("+")||t.equals("*")||t.equals("/")||t.equals("-")) {
-			
 		}
 		else if(t.charAt(0)=='>'|| t.charAt(0)=='<') {
 			if(top.name.equals(">=")) {
@@ -453,13 +453,12 @@ public class Parser {
 		ClassD c=classD();
 		return new Goal1(mc,c);
 	}
-	public static MainClass mainClass() {
+	public static MainClass mainClass() {		
 		Token top=queue.peek();
 		if(!top.value.equals("class"))	return null;
 		queue.poll();
 		System.out.println("From MainClass Call Identifier");
 		Identifier id=identifier();
-		
 		top=queue.peek();
 		if(!top.value.equals("{")) return null;
 		queue.poll();
@@ -469,6 +468,10 @@ public class Parser {
 		queue.poll();
 		top=queue.peek();
 		if(!top.value.equals("static")) return null;
+		queue.poll();
+		top=queue.peek();
+		//
+		if(!top.value.equals("void")) return null;
 		queue.poll();
 		top=queue.peek();
 		if(!top.value.equals("main")) return null;
@@ -506,7 +509,7 @@ public class Parser {
 	public static ClassD classD() {
 		Token top=queue.peek();
 		if(top.value.equals("class")) {
-//			queue.poll(); ********
+//			queue.poll();
 			System.out.println("From ClassD Call ClassDeclaration");
 			ClassDeclaration cd=classDeclaration();
 			System.out.println("From ClassD Call ClassD");
@@ -536,12 +539,17 @@ public class Parser {
 			top=queue.peek();
 			Expression ex=null;
 			CommaExpr ce=null;
+			/// top.value now = 10
 			if(!top.value.equals(")")) {
 				System.out.println("From Dot Call Expression");
-				 ex=expression();
-				 System.out.println("From Dot Call CommaExpr");
-				 ce=commaExpr();
+				ex=expression();
+				System.out.println("From Dot Call CommaExpr");
+				ce=commaExpr();
+				//
+				queue.poll();
 			}
+			//
+			top = queue.peek();
 			if(!top.value.equals(")"))	return null;
 			queue.poll();
 			System.out.println("From Dot Call ExprStar");
