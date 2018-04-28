@@ -145,9 +145,11 @@ public class Parser {
 			else return null;
 			System.out.println("From MethodDeclaration Call Expression");
 			Expression ex=expression();
+			top=queue.peek();
 			if(top.value.equals(";")) 
 				queue.poll();
 			else return null;
+			top=queue.peek();
 			if(top.value.equals("}")) 
 				queue.poll();
 			else return null;
@@ -162,7 +164,6 @@ public class Parser {
 		System.out.println("Stat: " + top.value);
 		if(top.value.equals("{")||top.value.equals("if")||top.value.equals("while")||
 				top.value.equals("System.out.println")||top.name.equals("ID")) {
-			if(top.value.equals("(")) queue.poll();
 			System.out.println("From Stat Call Statement");
 			Statement statement=statement();
 			System.out.println("From Stat Call Stat");
@@ -173,24 +174,31 @@ public class Parser {
 	}
 	public static Statement statement() {
 		Token top=queue.peek();
-		System.out.println("Statement: " + top.value);
+		System.out.println("Statement1: " + top.value);
 		if(top.value.equals("{")) {
 			queue.poll();
+			top=queue.peek();
+			System.out.println("Statement2: " + top.value);
 			System.out.println("From Statement Call Stat");
 			Stat stat =stat();
 			top=queue.peek();
 			if(top.value.equals("}"))
 				queue.poll();
+			else	return null;
 			return new Statement1(stat);
 		}
 		else if(top.value.equals("if")) {
 			queue.poll();
 			top=queue.peek();
+			
 			if(top.value.equals("("))
 				queue.poll();
 			else	return null;
+			top=queue.peek();
+			System.out.println("IF : "+top.value);
 			System.out.println("From Statement Call Expression");
 			Expression ex=expression();
+			top=queue.peek();
 			if(top.value.equals(")"))
 				queue.poll();
 			else	return null;
@@ -203,7 +211,6 @@ public class Parser {
 		else if(top.value.equals("while")) {
 			queue.poll();
 			top=queue.peek();
-			
 			if(top.value.equals("(")) queue.poll();
 			else	return null;
 			System.out.println("From Statement Call Expression");
@@ -216,6 +223,8 @@ public class Parser {
 				queue.poll();
 			else	return null;
 			System.out.println("From Statement Call Statement");
+			top=queue.peek();
+			System.out.println("EXP_Id : "+top.value);
 			Statement st=statement();
 			return new Statement3(ex,st);
 		}
@@ -240,8 +249,9 @@ public class Parser {
 			
 			return new Statement4(ex);
 		}
-		else if(isType(top.name)) {
-			queue.poll();
+		else if(top.name.equals("ID")) {
+			top=queue.peek();
+			System.out.println("Statement2: " + top.value);
 			System.out.println("From Statement Call Identifier");
 			Identifier id=identifier();
 			System.out.println("From Statement Call IdStar");
@@ -285,6 +295,7 @@ public class Parser {
 			else return null;
 			System.out.println("From IdStar Call Expression");
 			Expression ex2=expression();
+			top=queue.peek();
 			if(top.value.equals("]")) 
 				queue.poll();
 			else return null;
@@ -323,9 +334,12 @@ public class Parser {
 		}
 		else if(top.name.equals("ID")) {
 			System.out.println("From Expression Call Identifier");
+
 			Identifier id=identifier();
+
 			System.out.println("From Expression Call ExprStar");
 			ExprStar exs=exprStar();
+
 			return new Expression5(exs,id);
 		}
 		else if(top.value.equals("this")) {
@@ -379,7 +393,6 @@ public class Parser {
 			return new NewStar1(t,ex,exs);
 		}
 		else if(t.equals("ID")) {
-			queue.poll();
 			System.out.println("From NewStar Call Identifier");
 			Identifier id=identifier();
 			top=queue.peek();
@@ -599,6 +612,7 @@ public class Parser {
 		Type t=null;
 		Identifier id1=null;
 		CommaVar cv=null;
+		top=queue.peek();
 		if(top.name.equals("LEFT_ROUND_B")) {
 			queue.poll();
 			top=queue.peek();

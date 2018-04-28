@@ -17,6 +17,9 @@ public class Main {
 		
 		LexicalAnalyzer.getTokens();
 		Parser.parse();
-		System.out.println(Parser.goal().getValue());
+		Goal goal=Parser.goal();
+		if(goal==null)
+			System.out.println("syntax Error");
+		else	System.out.println(goal.getValue());
 	}
 }
