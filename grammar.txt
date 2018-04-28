@@ -1,4 +1,7 @@
-Goal ::= MainClass ( ClassDeclaration )* <EOF>
+Goal ::= MainClass  ClassD  <EOF>
+
+ClassD ::= ClassDeclaration ClassD | lamba
+ClassDeclaration
 
 MainClass ::= "class" Identifier "{" "public" "static" "void" "main" "(" "String" "[" "]" Identifier ")" "{" Statement "}" "}"
 
@@ -46,7 +49,7 @@ Expression ::= <INTEGER_LITERAL> ExprStar
 | "(" Expression ")" ExprStar
 
 NewStar ::= ("int" | "float" | "String" | "char" | "boolean" ) "[" Expression "]" ExprStar
-| Identifier "(" (Expression ( "," Expression)*)? ")" ExprStar
+| Identifier "(" (Expression CommaExpr)? ")" ExprStar
 
 ExprStar ::= ( "&&" | "||" | "==" | "!=" | "<" Equal | ">" Equal | "+" | "-" | "*" | "/" ) Expression ExprStar
 | "[" Expression "]" ExprStar

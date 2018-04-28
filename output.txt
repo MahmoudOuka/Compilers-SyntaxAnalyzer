@@ -2,8 +2,27 @@
 < ID > : -class1-
 < LEFT_CURLY_B > : -{-
 < EOL > : -ENDOFLINE-
+< PUBLIC > : -public-
+< STATIC > : -static-
+< MAIN > : -main-
+< LEFT_ROUND_B > : -(-
+< STRING > : -String-
+< LEFT_SQUARE_B > : -[-
+< RIGHT_SQUARE_B > : -]-
+< ID > : -args-
+< RIGHT_ROUND_B > : -)-
+< LEFT_CURLY_B > : -{-
+< EOL > : -ENDOFLINE-
 < INT > : -int-
 < ID > : -value-
+< ASSIGNMENT > : -=-
+< INTEGRAL_LITERAL > : -3-
+< SEMICOLON > : -;-
+< EOL > : -ENDOFLINE-
+< RIGHT_CURLY_B > : -}-
+< EOL > : -ENDOFLINE-
+< INT > : -int-
+< ID > : -value1-
 < ASSIGNMENT > : -=-
 < INTEGRAL_LITERAL > : -3-
 < SEMICOLON > : -;-
@@ -34,12 +53,6 @@
 < SEMICOLON > : -;-
 < EOL > : -ENDOFLINE-
 < RIGHT_CURLY_B > : -}-
-< EOL > : -ENDOFLINE-
-< UnknowToken > : -3xxsss -
-< EOL > : -ENDOFLINE-
-< UnknowToken > : -2dfdsfsdfsdad    2r223r                 -
-< INTEGRAL_LITERAL > : -32-
-< ID > : -r3w4grdsgsdg-
 < EOL > : -ENDOFLINE-
 < RIGHT_CURLY_B > : -}-
 < SEMICOLON > : -;-

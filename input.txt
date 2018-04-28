@@ -1,5 +1,8 @@
 class class1 {
-	int value = 3;
+	public static main(String[] args){
+		int value = 3;
+	}
+	int value1 = 3;
 	String text = "int x = 1";
 	/*
 		if (num < 1)
@@ -9,6 +12,4 @@ class class1 {
 	{
         System.out.println("/*hello*/");	
 	}
-	 3xxsss
-	 2dfdsfsdfsdad 32 2r223r r3w4grdsgsdg
 };

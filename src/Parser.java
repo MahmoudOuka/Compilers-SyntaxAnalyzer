@@ -18,36 +18,33 @@ public class Parser {
 		String fileAddress="output.txt";
 		Scanner in = new Scanner(new File(fileAddress));
 		while(in.hasNext()){
-			//System.out.println(in.nextLine());
 			String x=in.nextLine();
 			if(x.charAt(0)!='<')
 				continue;
-			//System.out.println(x);
 			String tmp="",tmp1="";
 			int i=2;
 			for( ; ;i++) {
-				if(x.charAt(i)=='>')
+				if(x.charAt(i)=='>' || x.charAt(i)==' ')
 					break;
 				tmp+=x.charAt(i);
 			}
+			while(i<x.length() && x.charAt(i)==' ')
+				i++;
 			if(tmp.equals("M_COMMENTS") || tmp.equals("EOL"))
 				continue;
+			
 			i+=5;
 			while(i<x.length() && x.charAt(i)!='-') {
 				tmp1+=x.charAt(i++);
 			}
-			queue.add(new Token(tmp,tmp1,""));
-		}
-		while(queue.size()>0) {
-			Token t=queue.poll();
-			System.out.println(t.name+" "+t.value);
+			System.out.println(tmp+" -- "+tmp1);
+			queue.add(new Token(tmp,tmp1,""));;
 		}
 	}
 	public static void parse() throws FileNotFoundException {
 		readTokens();
-		ClassDeclaration rule1=Class();
 	}
-	public static ClassDeclaration Class() {
+	public static ClassDeclaration classDeclaration() {
 		Token top=queue.peek();
 		if(top.name.equals("class")) {
 			queue.poll();
@@ -59,13 +56,15 @@ public class Parser {
 				queue.poll();
 				id2=identifier();
 			}
+			top=queue.peek();
 			if(top.name.equals("LEFT_CURLY_B")) {
 				queue.poll();
-				Type t=type();
 				VarD vd= varD();
 				ConstructorD cd=constructorD();
-				//MethodD md=methodD(); 
-				// return new ClassDeclaration1(t,vd,cd,md);
+				MethodD md=methodD(); 
+				if(id2==null)
+					return new ClassDeclaration1(id,vd,cd,md);
+				else	return new ClassDeclaration1(id,id2,vd,cd,md);
 			}
 			else {
 				return null;
@@ -148,11 +147,356 @@ public class Parser {
 		}
 		return  new Stat2();
 	}
-	public static Expression expression() {
+	public static Statement statement() {
+		System.out.println("hello from statement");
+		Token top=queue.peek();
+		if(top.value.equals("{")) {
+			
+			queue.poll();
+			Stat stat =stat();
+			top=queue.peek();
+			if(top.value.equals("}"))
+				queue.poll();
+			return new Statement1(stat);
+		}
+		else if(top.value.equals("if")) {
+			
+			queue.poll();
+			top=queue.peek();
+			if(top.value.equals("("))
+				queue.poll();
+			else	return null;
+			Expression ex=expression();
+			if(top.value.equals(")"))
+				queue.poll();
+			else	return null;
+			Statement st=statement();
+			IfStar f=ifStar();
+			return new Statement2(ex,st,f);
+		}
+		else if(top.value.equals("while")) {
+			queue.poll();
+			top=queue.peek();
+			if(top.value.equals("("))
+				queue.poll();
+			else	return null;
+			Expression ex=expression();
+			if(top.value.equals(")"))
+				queue.poll();
+			else	return null;
+			Statement st=statement();
+			return new Statement3(ex,st);
+		}
+		else if(top.value.equals("System.out.println")) {
+			queue.poll();
+			top=queue.peek();
+			if(top.value.equals("("))
+				queue.poll();
+			else	return null;
+			Expression ex=expression();
+			if(top.value.equals(")"))
+				queue.poll();
+			else	return null;
+			return new Statement4(ex);
+		}
+		else if(isType(top.name)) {
+			queue.poll();
+			Identifier id=identifier();
+			System.out.println("ss");
+			IdStar ids=idStar();
+			return new Statement5(id,ids);
+		}
+		else{
+			return null;
+		}
+	}
+	public static IfStar ifStar() {
+		Token top=queue.peek();
+		if(top.value.equals("else")) {
+			queue.poll();
+			Statement st=statement();
+			return new IfStar1(st);
+		}
+		return new IfStar2();
+	}
+	public static IdStar idStar() {
+		System.out.println("hello from idStar");
+		Token top=queue.peek();
+		if(top.value.equals("=")) {
+			queue.poll();
+			Expression ex=expression();
+			top=queue.peek();
+			System.out.println(top.value);
+			if(top.value.equals(";")) 
+				queue.poll();
+			else return null;
+			
+			return new IdStar1(ex);
+		}
+		else if(top.value.equals("[")) {
+			queue.poll();
+			Expression ex1=expression();
+			top=queue.peek();
+			if(top.value.equals("]")) 
+				queue.poll();
+			else return null;
+			Expression ex2=expression();
+			if(top.value.equals("]")) 
+				queue.poll();
+			else return null;
+			return new IdStar2(ex1,ex2);
+		}
 		return null;
 	}
-	public static Statement statement() {
+	public static Expression expression() {
+		Token top=queue.peek();
+		
+		if(top.name.equals("INTEGER_LITERAL")) {
+			String INT=top.name;
+			queue.poll();
+			System.out.println("expr "+queue.peek().name);
+			ExprStar exs=exprStar();
+			return new Expression1(INT,exs);
+		}
+		else if(top.name.equals("FLOAT_LITERAL")) {
+			String FLOAT=top.name;
+			queue.poll();
+			ExprStar exs=exprStar();
+			return new Expression2(FLOAT,exs);
+		}
+		else if(top.value.equals("true")) {
+			queue.poll();
+			ExprStar exs=exprStar();
+			return new Expression3(exs);
+		}
+		else if(top.value.equals("true")) {
+			queue.poll();
+			ExprStar exs=exprStar();
+			return new Expression4(exs);
+		}
+		else if(top.name.equals("ID")) {
+			queue.poll();
+			Identifier id=identifier();
+			ExprStar exs=exprStar();
+			return new Expression5(exs,id);
+		}
+		else if(top.value.equals("this")) {
+			queue.poll();
+			ExprStar exs=exprStar();
+			return new Expression6(exs);
+		}
+		else if(top.value.equals("new")) {
+			queue.poll();
+			NewStar ns= newStar();
+			return new Expression7(ns);
+		}
+		else if(top.value.equals("!")) {
+			queue.poll();
+			Expression ex= expression();
+			ExprStar exs=exprStar();
+			return new Expression8(ex,exs);
+		}
+		else if(top.value.equals("(")) {
+			queue.poll();
+			Expression ex= expression();
+			top=queue.peek();
+			if(!top.value.equals(")"))	return null;
+			ExprStar exs=exprStar();
+			return new Expression9(ex,exs);
+		}
 		return null;
+	}
+	public static NewStar newStar() {
+		Token top=queue.peek();
+		String t=top.name;
+		if(isType(t)) {
+			queue.poll();
+			top=queue.peek();
+			if(!top.value.equals("["))	return null;
+			queue.poll();
+			Expression ex= expression();
+			top=queue.peek();
+			if(!top.value.equals("]"))	return null;
+			queue.poll();
+			ExprStar exs=exprStar();
+			return new NewStar1(t,ex,exs);
+		}
+		else if(t.equals("ID")) {
+			queue.poll();
+			Identifier id=identifier();
+			top=queue.peek();
+			if(!top.value.equals("("))	return null;
+			queue.poll();
+			top=queue.peek();
+			Expression ex=null;
+			CommaExpr ce=null;
+			if(!top.value.equals(")")) {
+				 ex=expression();
+				 ce=commaExpr();
+			}
+			if(!top.value.equals(")"))	return null;
+			queue.poll();
+			ExprStar es=exprStar();
+			if(ex==null)
+				return new NewStar2(id,es); 
+			return new NewStar2(id,ex,es,ce);
+		}
+		else return null;
+
+	}
+	public static CommaExpr commaExpr() {
+		Token top=queue.peek();
+		if(top.name.equals("COMMA")) {
+			queue.poll();
+			Expression e=expression();
+			CommaExpr cv=commaExpr();
+			return new CommaExpr1(e,cv) ;
+		}
+		return new CommaExpr2() ;
+	}
+	public static ExprStar exprStar() {
+		Token top=queue.peek();
+		String t=top.value;
+		if(t.equals("==")||t.equals("&&")||t.equals("||")||t.equals("!=")||
+				t.equals("+")||t.equals("*")||t.equals("/")||t.equals("-")) {
+			
+		}
+		else if(t.charAt(0)=='>'|| t.charAt(0)=='<') {
+			if(top.name.equals(">=")) {
+				t=">";
+			}
+			if(top.name.equals("<=")) {
+				t="<";
+			}
+			queue.poll();
+			Equal e=equal();
+			Expression ex= expression();
+			ExprStar exs=exprStar();
+			return new ExprStar1(t,ex,exs,e);
+		}
+		else if(t.equals("[")) {
+			queue.poll();
+			Expression ex= expression();
+			top=queue.peek();
+			if(!top.value.equals("]"))	return null;
+			queue.poll();
+			ExprStar exs=exprStar();
+			return new ExprStar2(ex,exs);
+		}
+		else if(t.equals(".")) {
+			queue.poll();
+			Dot d=dot();
+			return new ExprStar3(d);
+		}
+		return new ExprStar4();
+	}
+	public static Goal goal() {
+		MainClass mc=mainClass();
+		ClassD c=classD();
+		return new Goal1(mc,c);
+	}
+	public static MainClass mainClass() {
+		Token top=queue.peek();
+		System.out.println(queue.size());
+		System.out.println("hello from mainClass");
+		if(!top.value.equals("class"))	return null;
+		queue.poll();
+		Identifier id=identifier();
+		
+		top=queue.peek();
+		if(!top.value.equals("{")) return null;
+		queue.poll();
+		
+		top=queue.peek();
+		System.out.println(top.value);
+		if(!top.value.equals("public")) return null;
+		queue.poll();
+		System.out.println("hello from mainClass2");
+		top=queue.peek();
+		if(!top.value.equals("static")) return null;
+		queue.poll();
+		top=queue.peek();
+		if(!top.value.equals("main")) return null;
+		queue.poll();
+		top=queue.peek();
+		if(!top.value.equals("(")) return null;
+		queue.poll();
+		top=queue.peek();
+		if(!top.value.equals("String")) return null;
+		queue.poll();
+		top=queue.peek();
+		if(!top.value.equals("[")) return null;
+		queue.poll();
+		top=queue.peek();
+		if(!top.value.equals("]")) return null;
+		queue.poll();
+		
+		Identifier id2=identifier();
+		top=queue.peek();
+		if(!top.value.equals(")")) return null;
+		queue.poll();
+		top=queue.peek();
+		if(!top.value.equals("{")) return null;
+		queue.poll();
+		Statement st=statement();
+		top=queue.peek();
+		if(!top.value.equals("}")) return null;
+		queue.poll();
+		top=queue.peek();
+		if(!top.value.equals("}")) return null;
+		queue.poll();
+		return new MainClass1(id,id2,st);
+	}
+	public static ClassD classD() {
+		Token top=queue.peek();
+		if(top.value.equals("class")) {
+			ClassDeclaration cd=classDeclaration();
+			ClassD c=classD();
+			return new ClassD1(cd,c);
+		}
+		return new ClassD2();
+	}
+	
+	
+	
+	public static Dot dot() {
+		Token top=queue.peek();
+		if(top.value.equals(".")) {
+			queue.poll();
+			top=queue.peek();
+			if(!top.value.equals("length"))	return null;
+			queue.poll();
+			ExprStar es=exprStar();
+			return new Dot1(es);
+		}
+		else if(top.name.equals("ID")) {
+			queue.poll();
+			Identifier id=identifier();
+			top=queue.peek();
+			if(!top.value.equals("("))	return null;
+			queue.poll();
+			top=queue.peek();
+			Expression ex=null;
+			CommaExpr ce=null;
+			if(!top.value.equals(")")) {
+				 ex=expression();
+				 ce=commaExpr();
+			}
+			if(!top.value.equals(")"))	return null;
+			queue.poll();
+			ExprStar es=exprStar();
+			if(ex==null)
+				return new Dot2(id,es); 
+			return new Dot2(id,ex,es,ce);
+		}
+		return null;
+	}
+	public static Equal equal() {
+		Token top=queue.peek();
+		if(top.value.equals("=")) {
+			return new Equal1();
+		}
+		return new Equal2();
 	}
 	public static ConstructorD constructorD() {
 		Token top=queue.peek();
@@ -166,21 +510,33 @@ public class Parser {
 	public static ConstructorDeclaration constructorDeclaration() {
 		Identifier id=identifier();
 		Token top=queue.peek();
+		Type t=null;
+		Identifier id1=null;
+		CommaVar cv=null;
 		if(top.name.equals("LEFT_ROUND_B")) {
 			queue.poll();
 			top=queue.peek();
 			if(isType(top.name)) {
-				Type t=type();
-				Identifier id1=identifier();
-				CommaVar cv=commaVar();
+				t=type();
+				id1=identifier();
+				cv=commaVar();
 			}
 			if(top.name.equals("RIGHT_ROUND_B")) {
 				queue.poll();
 				top=queue.peek();
 				if(top.name.equals("LEFT_CURLY_B")) {
 					queue.poll();
-					VarD v=varD();
-					//Stat st=stat();
+					VarD vd=varD();
+					Stat st=stat();	
+					top=queue.peek();
+					if(top.value.equals("}")) {
+						queue.poll();
+					}
+					else	return null;
+					if(t==null) {
+						return new ConstructorDeclaration1(id1,vd, st);
+					}
+					return new ConstructorDeclaration1(id,t,id1,cv,vd,st);
 				}
 				else {
 					return null;
@@ -222,6 +578,7 @@ public class Parser {
 		Token top=queue.peek();
 		if(top.name.equals("ID")) {
 			queue.poll();
+			System.out.println("hello from identifier");
 			return new Identifier(top.value);
 		}
 		return null;
@@ -244,6 +601,7 @@ public class Parser {
 				queue.poll();
 				return new SquareBrackets2();
 			}
+			else	return null;
 		}
 		return new SquareBrackets2();
 	}

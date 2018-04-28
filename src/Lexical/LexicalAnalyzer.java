@@ -38,7 +38,7 @@ public class LexicalAnalyzer {
 			targetString=targetString+Line+'\n';
 			output.add(new Output(targetString.length()-1,targetString.length(),"ENDOFLINE",new Token("EOL","ENDOFLINE")));
 		}
-		System.out.println(targetString);
+		//System.out.println(targetString);
 	}
 	
 	public static void sort() {
@@ -94,15 +94,15 @@ public class LexicalAnalyzer {
 					}
 				}
 				else if(startIdx1<=startIdx2 && endIdx1>=endIdx2) {
-					System.out.println(startIdx1+","+endIdx1+" --> "+startIdx2+","+endIdx2);
-					System.out.println(output.get(i).token.name+","+output.get(j).token.name);
+					//System.out.println(startIdx1+","+endIdx1+" --> "+startIdx2+","+endIdx2);
+					//System.out.println(output.get(i).token.name+","+output.get(j).token.name);
 					output.remove(j);
 					i=-1;
 					break;
 				}
 				else if(startIdx2<=startIdx1 && endIdx2>=endIdx1) {
-					System.out.println(startIdx1+","+endIdx1+" --> "+startIdx2+","+endIdx2);
-					System.out.println(output.get(i).token.name+","+output.get(j).token.name);
+					//System.out.println(startIdx1+","+endIdx1+" --> "+startIdx2+","+endIdx2);
+					//System.out.println(output.get(i).token.name+","+output.get(j).token.name);
 					output.remove(i);
 					i=-1;
 					break;
