@@ -15,12 +15,14 @@ public class LexicalAnalyzer {
 	public static ArrayList<Output>output=new ArrayList<Output>();
 	public static boolean visited[]=new boolean[10000000];
 	public static String targetString="",tmp="";
+	private static Scanner in;
+	private static Scanner in2;
 	public static void initTokens() throws FileNotFoundException {
 		for(int i=0 ; i<10000000 ; i++) {
 			visited[i]=false;
 		}
 		String fileAddress="init.txt";
-		Scanner in = new Scanner(new File(fileAddress));
+		in = new Scanner(new File(fileAddress));
 		while(in.hasNext()){
 			//System.out.println(in.nextLine());
 			String x=in.nextLine();
@@ -32,9 +34,9 @@ public class LexicalAnalyzer {
 	
 	public static void readInputFile() throws FileNotFoundException {
 		String fileAddress="input.txt";
-		Scanner in = new Scanner(new File(fileAddress));
-		while(in.hasNext()){
-			String Line=in.nextLine();
+		in2 = new Scanner(new File(fileAddress));
+		while(in2.hasNext()){
+			String Line=in2.nextLine();
 			targetString=targetString+Line+'\n';
 			output.add(new Output(targetString.length()-1,targetString.length(),"ENDOFLINE",new Token("EOL","ENDOFLINE")));
 		}

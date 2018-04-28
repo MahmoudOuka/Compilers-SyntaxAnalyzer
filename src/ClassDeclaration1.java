@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 public class ClassDeclaration1 implements ClassDeclaration {
 	

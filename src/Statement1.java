@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 public class Statement1 implements Statement {
 

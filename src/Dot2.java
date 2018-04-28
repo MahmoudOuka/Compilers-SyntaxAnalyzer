@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 
 public class Dot2 implements Dot{
 	private Identifier id;

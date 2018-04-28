@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 class TypeIdentifier {
 	Type type;

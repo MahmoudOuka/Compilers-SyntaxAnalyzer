@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 public class NewStar2 implements NewStar {
 	// Identifier "(" (Expression ( "," Expression)*)? ")" ExprStar

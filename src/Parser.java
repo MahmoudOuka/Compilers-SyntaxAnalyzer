@@ -8,6 +8,7 @@ import Lexical.Token;
 
 public class Parser {
 	static Queue<Token>queue=new LinkedList<Token>();
+	private static Scanner in;
 	public static boolean isType(String name) {
 		if(name.equals("INT") || name.equals("STRING") || name.equals("FLOAT") || name.equals("CHARACTER")|| name.equals("BOOLEAN")) {
 			return true;
@@ -16,7 +17,7 @@ public class Parser {
 	}
 	public static void readTokens() throws FileNotFoundException {
 		String fileAddress="output.txt";
-		Scanner in = new Scanner(new File(fileAddress));
+		in = new Scanner(new File(fileAddress));
 		while(in.hasNext()){
 			String x=in.nextLine();
 			if(x.charAt(0)!='<')
@@ -37,13 +38,16 @@ public class Parser {
 			while(i<x.length() && x.charAt(i)!='-') {
 				tmp1+=x.charAt(i++);
 			}
-			System.out.println(tmp+" -- "+tmp1);
+//			System.out.println(tmp+" -- "+tmp1);
 			queue.add(new Token(tmp,tmp1,""));;
 		}
 	}
 	public static void parse() throws FileNotFoundException {
 		readTokens();
 	}
+	
+	
+	
 	public static ClassDeclaration classDeclaration() {
 		Token top=queue.peek();
 		if(top.name.equals("class")) {
@@ -136,7 +140,6 @@ public class Parser {
 		}
 		else return null;
 	}
-
 	public static Stat stat() {
 		Token top=queue.peek();
 		if(top.value.equals("{")||top.value.equals("if")||top.value.equals("while")||
@@ -432,6 +435,7 @@ public class Parser {
 		queue.poll();
 		
 		Identifier id2=identifier();
+		System.out.println("hello from identifer2");
 		top=queue.peek();
 		if(!top.value.equals(")")) return null;
 		queue.poll();
@@ -450,15 +454,13 @@ public class Parser {
 	public static ClassD classD() {
 		Token top=queue.peek();
 		if(top.value.equals("class")) {
+//			queue.poll(); ********
 			ClassDeclaration cd=classDeclaration();
 			ClassD c=classD();
 			return new ClassD1(cd,c);
 		}
 		return new ClassD2();
 	}
-	
-	
-	
 	public static Dot dot() {
 		Token top=queue.peek();
 		if(top.value.equals(".")) {
@@ -605,5 +607,4 @@ public class Parser {
 		}
 		return new SquareBrackets2();
 	}
-	
 }
