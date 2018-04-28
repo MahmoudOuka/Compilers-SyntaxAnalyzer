@@ -19,6 +19,8 @@ public class Main {
 		
 		LexicalAnalyzer.getTokens();
 		Parser.parse();
-		System.out.println(Parser.goal().getValue());
+		if(Parser.goal() != null) {
+			System.out.println(Parser.goal().getValue());
+		}
 	}
 }

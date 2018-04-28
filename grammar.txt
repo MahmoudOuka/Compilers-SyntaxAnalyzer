@@ -64,8 +64,3 @@ Dot ::= "." "length" ExprStar
 CommaExpr ::= "," Expression CommaExpr | lamba
 
 Identifier ::= <IDENTIFIER>
-
-
-
-
-a=5+3;b=10*2;print(a);print(b)	
