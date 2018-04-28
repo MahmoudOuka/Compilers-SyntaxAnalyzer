@@ -10,7 +10,7 @@ public class Expression1 implements Expression {
 	}
 	@Override
 	public String getValue() {
-		return intLiteral+" "+exprStar.getValue();
+		return intLiteral+exprStar.getValue();
 	}
 
 }

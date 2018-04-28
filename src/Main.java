@@ -15,11 +15,8 @@ public class Main {
 //		Statement s= new Statement5(new Identifier("a"),id1);
 //		System.out.println(s.getValue());
 		
-		
 		LexicalAnalyzer.getTokens();
 		Parser.parse();
-		if(Parser.goal() != null) {
-			System.out.println(Parser.goal().getValue());
-		}
+		System.out.println(Parser.goal().getValue());
 	}
 }

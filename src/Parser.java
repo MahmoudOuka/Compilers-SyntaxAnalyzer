@@ -31,14 +31,16 @@ public class Parser {
 			}
 			while(i<x.length() && x.charAt(i)==' ')
 				i++;
-			if(tmp.equals("M_COMMENTS") || tmp.equals("EOL"))
+			if(tmp.equals("M_COMMENTS") || tmp.equals("EOL") || tmp.equals("S_COMMENTS")) {
 				continue;
-			
+			}
+				
 			i+=5;
 			while(i<x.length() && x.charAt(i)!='-') {
 				tmp1+=x.charAt(i++);
 			}
-//			System.out.println(tmp+" -- "+tmp1);
+			if(tmp.equals("MINUS")) tmp1 = "-";
+			System.out.println(tmp+" -- "+tmp1);
 			queue.add(new Token(tmp,tmp1,""));
 		}
 	}
@@ -157,8 +159,10 @@ public class Parser {
 	}
 	public static Stat stat() {
 		Token top=queue.peek();
+		System.out.println("Stat: " + top.value);
 		if(top.value.equals("{")||top.value.equals("if")||top.value.equals("while")||
 				top.value.equals("System.out.println")||top.name.equals("ID")) {
+			if(top.value.equals("(")) queue.poll();
 			System.out.println("From Stat Call Statement");
 			Statement statement=statement();
 			System.out.println("From Stat Call Stat");
@@ -169,8 +173,8 @@ public class Parser {
 	}
 	public static Statement statement() {
 		Token top=queue.peek();
+		System.out.println("Statement: " + top.value);
 		if(top.value.equals("{")) {
-			
 			queue.poll();
 			System.out.println("From Statement Call Stat");
 			Stat stat =stat();
@@ -199,11 +203,15 @@ public class Parser {
 		else if(top.value.equals("while")) {
 			queue.poll();
 			top=queue.peek();
-			if(top.value.equals("("))
-				queue.poll();
+			
+			if(top.value.equals("(")) queue.poll();
 			else	return null;
 			System.out.println("From Statement Call Expression");
+			top=queue.peek();
+			System.out.println("before: " + top.value);
 			Expression ex=expression();
+			top=queue.peek();
+			System.out.println("after: " + top.value);
 			if(top.value.equals(")"))
 				queue.poll();
 			else	return null;
@@ -219,9 +227,17 @@ public class Parser {
 			else	return null;
 			System.out.println("From Statement Call Expression");
 			Expression ex=expression();
-			if(top.value.equals(")"))
+			top = queue.peek();
+			if(top.value.equals(")")) {
 				queue.poll();
+			}
 			else	return null;
+			top = queue.peek();
+			if(top.value.equals(";")) {
+				queue.poll();
+			}
+			else	return null;	
+			
 			return new Statement4(ex);
 		}
 		else if(isType(top.name)) {
@@ -246,8 +262,7 @@ public class Parser {
 		}
 		return new IfStar2();
 	}
-	public static IdStar idStar() { // ***************
-		System.out.println("hello from idStar");
+	public static IdStar idStar() {
 		Token top=queue.peek();
 		if(top.value.equals("=")) {
 			queue.poll();
@@ -279,11 +294,10 @@ public class Parser {
 	}
 	public static Expression expression() {
 		Token top=queue.peek();
-		
-		if(top.name.equals("INTEGER_LITERAL")) {
-			String INT=top.name;
+		System.out.println("Expression: " + top.value);
+		if(top.name.equals("INTEGRAL_LITERAL")) {
+			String INT=top.value;
 			queue.poll();
-			System.out.println("expr "+queue.peek().name);
 			System.out.println("From Expression Call Expression");
 			ExprStar exs=exprStar();
 			return new Expression1(INT,exs);
@@ -308,7 +322,6 @@ public class Parser {
 			return new Expression4(exs);
 		}
 		else if(top.name.equals("ID")) {
-			queue.poll();
 			System.out.println("From Expression Call Identifier");
 			Identifier id=identifier();
 			System.out.println("From Expression Call ExprStar");
@@ -341,6 +354,7 @@ public class Parser {
 			Expression ex= expression();
 			top=queue.peek();
 			if(!top.value.equals(")"))	return null;
+			queue.poll();
 			System.out.println("From Expression Call ExprStar");
 			ExprStar exs=exprStar();
 			return new Expression9(ex,exs);
@@ -404,14 +418,18 @@ public class Parser {
 		return new CommaExpr2() ;
 	}
 	public static ExprStar exprStar() {
-		////
 		Token top=queue.peek();
 		String t=top.value;
-		System.out.println("t = "+ t);
 		if(t.equals("==")||t.equals("&&")||t.equals("||")||t.equals("!=")||
 				t.equals("+")||t.equals("*")||t.equals("/")||t.equals("-")) {
+			queue.poll();
+			System.out.println("From ExprStar Call Expression");
+			Expression ex = expression();
+			System.out.println("From ExprStar Call ExprStar");
+			ExprStar es = exprStar();
+			return new ExprStar1(t,ex,es);
 		}
-		else if(t.charAt(0)=='>'|| t.charAt(0)=='<') {
+		else if(t.length()>0 && (t.charAt(0)=='>'|| t.charAt(0)=='<')) {
 			if(top.name.equals(">=")) {
 				t=">";
 			}
@@ -431,6 +449,7 @@ public class Parser {
 			queue.poll();
 			System.out.println("From ExprStar Call Expression");
 			Expression ex= expression();
+			System.out.println("EX: " + ex.getValue());
 			top=queue.peek();
 			if(!top.value.equals("]"))	return null;
 			queue.poll();
@@ -439,7 +458,6 @@ public class Parser {
 			return new ExprStar2(ex,exs);
 		}
 		else if(t.equals(".")) {
-			queue.poll();
 			System.out.println("From ExprStar Call Dot");
 			Dot d=dot();
 			return new ExprStar3(d);
@@ -453,7 +471,7 @@ public class Parser {
 		ClassD c=classD();
 		return new Goal1(mc,c);
 	}
-	public static MainClass mainClass() {		
+	public static MainClass mainClass() {
 		Token top=queue.peek();
 		if(!top.value.equals("class"))	return null;
 		queue.poll();
@@ -470,7 +488,6 @@ public class Parser {
 		if(!top.value.equals("static")) return null;
 		queue.poll();
 		top=queue.peek();
-		//
 		if(!top.value.equals("void")) return null;
 		queue.poll();
 		top=queue.peek();
@@ -508,8 +525,7 @@ public class Parser {
 	}
 	public static ClassD classD() {
 		Token top=queue.peek();
-		if(top.value.equals("class")) {
-//			queue.poll();
+		if(queue.size()>0 && top.value.equals("class")) {
 			System.out.println("From ClassD Call ClassDeclaration");
 			ClassDeclaration cd=classDeclaration();
 			System.out.println("From ClassD Call ClassD");
@@ -526,11 +542,11 @@ public class Parser {
 			if(!top.value.equals("length"))	return null;
 			queue.poll();
 			System.out.println("From Dot Call ExprStar");
+			top = queue.peek();
 			ExprStar es=exprStar();
 			return new Dot1(es);
 		}
 		else if(top.name.equals("ID")) {
-			queue.poll();
 			System.out.println("From Dot Call Identifier");
 			Identifier id=identifier();
 			top=queue.peek();
@@ -539,14 +555,11 @@ public class Parser {
 			top=queue.peek();
 			Expression ex=null;
 			CommaExpr ce=null;
-			/// top.value now = 10
 			if(!top.value.equals(")")) {
 				System.out.println("From Dot Call Expression");
 				ex=expression();
 				System.out.println("From Dot Call CommaExpr");
 				ce=commaExpr();
-				//
-				queue.poll();
 			}
 			//
 			top = queue.peek();
@@ -563,13 +576,14 @@ public class Parser {
 	public static Equal equal() {
 		Token top=queue.peek();
 		if(top.value.equals("=")) {
+			queue.poll();
 			return new Equal1();
 		}
 		return new Equal2();
 	}
 	public static ConstructorD constructorD() {
 		Token top=queue.peek();
-		if(top.name.equals("")) {
+		if(top.name.equals("ID")) {
 			System.out.println("From ConstructorD Call ConstructorDeclaration");
 			ConstructorDeclaration cd=constructorDeclaration();
 			System.out.println("From ConstructorD Call ConstructorD");

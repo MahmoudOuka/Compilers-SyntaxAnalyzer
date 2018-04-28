@@ -13,7 +13,7 @@ public class MainClass1 implements MainClass{
 
 	@Override
     public String getValue() {
-        return  "class " + id1.getValue() + "{" + "public" + "static" + "void" + "main" + "(" 
-		+ "String" + "[" + "]" + id2.getValue() + ")" + "{" + statement.getValue() + "}" + "}";
+        return  "class " + id1.getValue() + "{ " + "public " + "static " + "void " + "main " + "(" 
+		+ "String" + "[" + "] " + id2.getValue() + ")" + "{ " + statement.getValue() + " }" + " }";
     }
 }

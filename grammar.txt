@@ -1,7 +1,6 @@
 Goal ::= MainClass  ClassD  <EOF>
 
 ClassD ::= ClassDeclaration ClassD | lamba
-ClassDeclaration
 
 MainClass ::= "class" Identifier "{" "public" "static" "void" "main" "(" "String" "[" "]" Identifier ")" "{" Statement "}" "}"
 
@@ -38,7 +37,7 @@ Statement ::= "{" Stat  "}"
 IfStar ::= "else" Statement | lamba
 IdStar ::= "=" Expression ";" | "[" Expression "]" "=" Expression ";"
 
-Expression ::= <INTEGER_LITERAL> ExprStar
+Expression ::= <INTEGRAL_LITERAL> ExprStar
 | <FLOAT_LITERAL> ExprStar
 | "true" ExprStar
 | "false" ExprStar
